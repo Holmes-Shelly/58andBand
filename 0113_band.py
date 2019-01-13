@@ -53,5 +53,4 @@ def query_cycle():
 		time.sleep(time_delay)
 	return
 
-#query_cycle()
-html_query()
+query_cycle()
