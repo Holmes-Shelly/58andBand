@@ -43,13 +43,18 @@ def send_email(num):
 	
 def query_cycle():
 	time_delay = 60
+	query_times = 0
 	while(1):
 		try:
-			print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+			if(query_times == 60):
+				print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+				print "60 times completed, next cycle begin."
+				query_times = 0
 			html_query()
+			query_times += 1
 		except requests.exceptions.ConnectionError, ErrorAlert:
 			print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-			print ErrorAlert
+			print "Error: ", ErrorAlert
 		time.sleep(time_delay)
 	return
 
