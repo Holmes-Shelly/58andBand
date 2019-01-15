@@ -22,7 +22,7 @@ headers = {
 def html_query():
 	req.headers = headers
 	html_response = req.get(url).content.decode('utf-8')
-	file_write(html_response)
+	# file_write(html_response)
 	# html_response = open('0113.txt', 'r').read().decode('utf-8')
 	if('ISDCaptcha' in html_response):
 		print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
@@ -74,10 +74,11 @@ def query_cycle():
 		try:
 			html_query()
 			cycle_time += 1
-			if(cycle_time == 12):
-				print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-				print "12 times completed."
-				cycle_time = 0
+			print cycle_time
+			# if(cycle_time == 12):
+				#　print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+				# print "12 times completed."
+				# cycle_time = 0
 		except requests.exceptions.SSLError, ErrorAlert:
 			print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 			print "Error: ", ErrorAlert
