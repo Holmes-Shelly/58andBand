@@ -35,7 +35,7 @@ def html_query():
 		sendtime = ans_d[1]
 		if(sendtime[-3:] == u'分钟前'):
 			# print "Find(less than 1 hour):", ', '.join(ans_d)
-			if(int(sendtime[0:len(sendtime)-3]) < 12):
+			if(int(sendtime[0:len(sendtime)-3]) < 22):
 				print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 				# print "Find:", ', '.join(ans_d)
 				send_email(', '.join(ans_d))
