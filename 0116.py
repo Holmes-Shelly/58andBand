@@ -25,7 +25,7 @@ headers = {
 def html_query():
 	req.headers = headers
 	html_response = get_list(req.get(url).content.decode('utf-8'))
-	file_write(html_response)
+	# file_write(html_response)
 	# html_response = get_list(open('0113.txt', 'r').read().decode('utf-8'))
 	if('ISDCaptcha' in html_response):
 		print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
