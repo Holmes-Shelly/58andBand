@@ -102,7 +102,7 @@ def query_cycle():
 		try:
 			html_query()
 			cycle_time += 1
-			print cycle_time
+			# print cycle_time
 			if(cycle_time % 3 == 0):
 				print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 				print cycle_time, " times completed."
