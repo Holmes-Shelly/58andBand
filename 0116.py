@@ -93,13 +93,13 @@ def get_list(resp):
 # 网页查询函数
 def query_cycle():
 	cycle_time = 0
-	time_hour = int(time.strftime('%H',time.localtime(time.time())))
-	if time_hour == 22:
-		time_delay = 36000
-	else:
-		time_delay = 1200
 	while(1):
-		try:
+			time_hour = int(time.strftime('%H',time.localtime(time.time())))
+	      if time_hour == 22:
+		     time_delay = 36000
+	      else:
+		     time_delay = 1200
+try:
 			html_query()
 			cycle_time += 1
 			# print cycle_time
