@@ -24,14 +24,20 @@ headers = {
 
 def html_query():
 	req.headers = headers
-	html_response = get_list(req.get(url).content.decode('utf-8'))
-	# file_write(html_response)
-	# html_response = get_list(open('0113.txt', 'r').read().decode('utf-8'))
-	if('ISDCaptcha' in html_response):
+	# html_response_pre = get_list(open('0113.txt', 'r').read().decode('utf-8'))
+	try:
+		html_response_pre = req.get(url).content.decode('utf-8')
+	except requests.exceptions.SSLError, ErrorAlert:
+		print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+		print "Error: ", ErrorAlert
+		send_email("Msg from 58bot: SSLError!")
+		return
+	if('ISDCaptcha' in html_response_pre):
 		print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 		print "Error: ISDCaptcha!"
 		send_email("Msg from 58bot: ISDCaptcha!")
 		return
+	html_response = num_replace(html_response_pre)
 	res = r'<h2>.*?>\s+(.*?)\s+<.*?</h2>.*?<div class="sendTime">\s+(\S+)\s+</div>.*?<b class="strongbox">(.*?)</b>'
 	ans = re.findall(res, html_response, re.I|re.S|re.M)
 	for ans_d in ans:
@@ -39,8 +45,7 @@ def html_query():
 		if(sendtime[-3:] == u'分钟前'):
 			house_detail = ', '.join(ans_d)
 			if(int(sendtime[0:len(sendtime)-3]) < 22):
-				print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-				print "Find 1."# , house_detail
+				print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "Find 1."# , house_detail
 				send_email(house_detail)
 	return
 
@@ -53,7 +58,7 @@ def send_email(msg):
 	sender = 'shihao1024@163.com'
 	receivers = ['shihao1024@163.com']  # 接收邮件
 
-	message = MIMEText(url, 'plain', 'utf-8')
+	message = MIMEText(msg[0:6], 'plain', 'utf-8')
 	message['From'] = "shihao<shihao1024@163.com>"
 	message['To'] = "shihao<shihao1024@163.com>"
 
@@ -65,12 +70,12 @@ def send_email(msg):
 		smtpObj.connect(mail_host, 25)    # 25 为 SMTP 端口号
 		smtpObj.login(mail_user,mail_pass)
 		smtpObj.sendmail(sender, receivers, message.as_string())
-		print "send successfully"
+		# print "delivery successful"
 	except smtplib.SMTPException:
-		print "send unsuccessfully"
+		print "delivery failed"
 	return
 
-def get_list(resp):
+def num_replace(resp):
 	base64_str = re.findall('data:application/font-ttf;charset=utf-8;base64,(.*)\'\) format\(\'truetype\'\)}', resp)
 	bin_data = base64.b64decode(base64_str[0])
 	fonts = TTFont(io.BytesIO(bin_data))
@@ -94,22 +99,15 @@ def get_list(resp):
 def query_cycle():
 	cycle_time = 0
 	while(1):
-	time_hour = int(time.strftime('%H',time.localtime(time.time())))
-	        if time_hour == 22:
-		       time_delay = 36000
-	        else:
-		       time_delay = 1200
-try:
-			html_query()
-			cycle_time += 1
-			# print cycle_time
-			if(cycle_time % 3 == 0):
-				print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-				print cycle_time, " times completed."
-		except requests.exceptions.SSLError, ErrorAlert:
-			print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-			print "Error: ", ErrorAlert
-			send_email("Msg from 58bot: SSLError!")
+		time_delay = 1200
+		time_hour = int(time.strftime('%H',time.localtime(time.time())))
+		if time_hour == 22:
+			time_delay = 36000		
+
+		html_query()
+		cycle_time += 1
+		if(cycle_time % 3 == 0):
+			print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), cycle_time, "times completed."
 		time.sleep(time_delay)
 	return
 
