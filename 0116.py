@@ -50,15 +50,14 @@ def html_query():
 	return
 
 def send_email(msg):
-	# 第三方 SMTP 服务
-	mail_host="smtp.163.com"  #设置服务器
-	mail_user="shihao1024@163.com"   #用户名
-	mail_pass="shihao1992"   #口令
+	mail_host="smtp.163.com" 
+	mail_user="shihao1024@163.com"  
+	mail_pass="shihao1992"  
 
 	sender = 'shihao1024@163.com'
-	receivers = ['shihao1024@163.com']  # 接收邮件
+	receivers = ['shihao1024@163.com']  
 
-	message = MIMEText(msg[0:6], 'plain', 'utf-8')
+	message = MIMEText(msg[0:10], 'plain', 'utf-8')
 	message['From'] = "shihao<shihao1024@163.com>"
 	message['To'] = "shihao<shihao1024@163.com>"
 
@@ -67,7 +66,7 @@ def send_email(msg):
 
 	try:
 		smtpObj = smtplib.SMTP()
-		smtpObj.connect(mail_host, 25)    # 25 为 SMTP 端口号
+		smtpObj.connect(mail_host, 25) 
 		smtpObj.login(mail_user,mail_pass)
 		smtpObj.sendmail(sender, receivers, message.as_string())
 		# print "delivery successful"
@@ -76,33 +75,26 @@ def send_email(msg):
 	return
 
 def num_replace(resp):
-	base64_str = re.findall('data:application/font-ttf;charset=utf-8;base64,(.*)\'\) format\(\'truetype\'\)}', resp)
-	bin_data = base64.b64decode(base64_str[0])
+	base64_str = re.findall('base64,(.*)\'\) format', resp)[0]
+	bin_data = base64.b64decode(base64_str)
 	fonts = TTFont(io.BytesIO(bin_data))
 	bestcmap = fonts.getBestCmap()
-	newmap = {}
-	for key in bestcmap.keys():
-		# print(key)
-		# print(re.findall(r'(\d+)',bestcmap[key]))
-		value = int(re.findall(r'(\d+)',bestcmap[key])[0])-1
-		key = hex(key)
-		newmap[key] = value
-	# print('==========', newmap)
 	resp_ = resp
-	for key,value in newmap.items():
-		key_ = key.replace('0x', '&#x') + ';'
-		if key_ in resp_:
-			resp_ = resp_.replace(key_, str(value))
+	for key,value in bestcmap.items():
+		new_value = int(re.findall(r'(\d+)',value)[0])-1
+		new_key = hex(key).replace('0x', '&#x') + ';'
+		if new_key in resp_:
+			resp_ = resp_.replace(new_key, str(new_value))
 	return resp_
 
-# 网页查询函数
 def query_cycle():
 	cycle_time = 0
+	print "Start monitoring.----------"
 	while(1):
 		time_delay = 1200
 		time_hour = int(time.strftime('%H',time.localtime(time.time())))
 		if time_hour == 22:
-			time_delay = 36000		
+			time_delay = 32400		
 
 		html_query()
 		cycle_time += 1
@@ -118,6 +110,5 @@ def query_cycle():
 	# f.close
 	# return
 	
-# 开始查询	
 query_cycle()
 # html_query()
