@@ -29,7 +29,7 @@ def html_query():
 		html_response_pre = req.get(url).content.decode('utf-8')
 	except requests.exceptions.SSLError, ErrorAlert:
 		print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-		print "Error: ", ErrorAlert
+		print "Error: SSLError!"
 		send_email("Msg from 58bot: SSLError!")
 		return
 	if('ISDCaptcha' in html_response_pre):
