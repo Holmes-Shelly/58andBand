@@ -10,7 +10,7 @@ from email.header import Header
 from fontTools.ttLib import TTFont
 
 req = requests.session()
-url = 'https://qd.58.com/jingjijiaoche/0/pve_5864_7_999999/?PGTID=0d301ef1-0007-af12-011d-42748daec82a&ClickID=7'
+url_tuple = ('https://weihai', 'https://yt', 'https://qd')
 
 headers = {
 	'accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -22,7 +22,7 @@ headers = {
 	'user-agent':'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
 	}
 
-def html_query():
+def html_query(url):
 	req.headers = headers
 	# html_response = open('0122.html', 'r').read().decode('utf-8')
 	try:
@@ -38,7 +38,7 @@ def html_query():
 	for ans_d in ans:	
 		sendtime = ans_d[-1]
 		if(sendtime[-3:] == u'分钟前'):
-			if(int(sendtime[0:len(sendtime)-3]) < 60):
+			if(int(sendtime[0:len(sendtime)-3]) < 31):
 				print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), "Find 1."
 				print '\n'.join(ans_d)
 				send_email(ans_d)
@@ -74,16 +74,16 @@ def query_cycle():
 	cycle_time = 0
 	print "----------Start monitoring----------"
 	while(1):
-		time_delay = 1200
+		time_delay = 600
 		time_hour = int(time.strftime('%H',time.localtime(time.time())))
 		if time_hour == 22:
 			time_delay = 32400		
-
-		html_query()
+		for url in url_tuple:
+			html_query(url+'.58.com/ershouche/0/pve_5864_7_12/')
+			time.sleep(time_delay)
 		cycle_time += 1
-		if(cycle_time % 3 == 0):
+		if(cycle_time % 4 == 0):
 			print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), cycle_time, "times completed."
-		time.sleep(time_delay)
 	return
 
 # def file_write(content):
@@ -93,5 +93,5 @@ def query_cycle():
 	# f.close
 	# return
 	
-# query_cycle()
-html_query()
+query_cycle()
+# html_query()
